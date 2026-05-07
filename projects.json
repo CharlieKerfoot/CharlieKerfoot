@@ -5,9 +5,9 @@
     "CharlieKerfoot/haskgrad",
     "CharlieKerfoot/rat-vision",
     "CharlieKerfoot/top100-game",
-    "CharlieKerfoot/maze-threejs",
+    "CharlieKerfoot/maze-threejs"
   ],
   "_excludeReposComment": "Repos to exclude from OSS contributions even if matches found.",
-  "excludeRepos": [Farama-Foundation/Gymnasium]
+  "excludeRepos": ["Farama-Foundation/Gymnasium"]
 }
 
