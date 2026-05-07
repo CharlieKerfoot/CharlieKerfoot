@@ -50,7 +50,7 @@ const renderProjects = (projects) => {
   if (!projects.length) return "_No projects configured yet — edit `projects.json`._";
   return projects
     .map((p) => {
-      const meta = [p.language && `\`${p.language}\``, p.stars > 0 && `★ ${p.stars}`]
+      const meta = [p.language && `\`${p.language}\``/*, p.stars > 0 && `★ ${p.stars}`*/]
         .filter(Boolean)
         .join(" · ");
       const desc = p.description ? ` — ${p.description}` : "";

@@ -10,11 +10,11 @@ For more, see [charliekerfoot.com](https://charliekerfoot.com) \
 ### Some projects
 
 <!-- PROJECTS:START -->
-- **[swarm-cli](https://github.com/CharlieKerfoot/swarm-cli)** `Go` · ★ 1 — Build ideas out end-to-end by replacing the human with agentic swarms.
-- **[haskgrad](https://github.com/CharlieKerfoot/haskgrad)** `Haskell` · ★ 1 — Tensor Autograd Engine built out in Haskell (inspired by Karpathy's micrograd)
-- **[rat-vision](https://github.com/CharlieKerfoot/rat-vision)** `Python` · ★ 1 — A PyTorch CNN trained on sample images to detect rats in NYC apartments via a Raspberry Pi webcam and OpenCV.
-- **[top100-game](https://github.com/CharlieKerfoot/top100-game)** `TypeScript` · ★ 1 — A fun browser game side project where players aim to guess the lowest answers on Top 100 lists
-- **[maze-threejs](https://github.com/CharlieKerfoot/maze-threejs)** `TypeScript` · ★ 1 — Visualizing maze algorithms (like Kruskal's) in the browser
+- **[swarm-cli](https://github.com/CharlieKerfoot/swarm-cli)** `Go` — Build ideas out end-to-end by replacing the human with agentic swarms.
+- **[haskgrad](https://github.com/CharlieKerfoot/haskgrad)** `Haskell` — Tensor Autograd Engine built out in Haskell (inspired by Karpathy's micrograd)
+- **[rat-vision](https://github.com/CharlieKerfoot/rat-vision)** `Python` — A PyTorch CNN trained on sample images to detect rats in NYC apartments via a Raspberry Pi webcam and OpenCV.
+- **[top100-game](https://github.com/CharlieKerfoot/top100-game)** `TypeScript` — A fun browser game side project where players aim to guess the lowest answers on Top 100 lists
+- **[maze-threejs](https://github.com/CharlieKerfoot/maze-threejs)** `TypeScript` — Visualizing maze algorithms (like Kruskal's) in the browser
 <!-- PROJECTS:END -->
 
 ### Open source contributions
