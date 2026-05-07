@@ -1,0 +1,13 @@
+{
+  "_comment": "Pick 5 repos (owner/name) to feature. Order is preserved.",
+  "projects": [
+    "CharlieKerfoot/swarm-cli",
+    "CharlieKerfoot/haskgrad",
+    "CharlieKerfoot/rat-vision",
+    "CharlieKerfoot/top100-game",
+    "CharlieKerfoot/maze-threejs",
+  ],
+  "_excludeReposComment": "Repos to exclude from OSS contributions even if matches found.",
+  "excludeRepos": [Farama-Foundation/Gymnasium]
+}
+
