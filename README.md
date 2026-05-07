@@ -13,7 +13,7 @@ For more, see [charliekerfoot.com](https://charliekerfoot.com) \
 - **[swarm-cli](https://github.com/CharlieKerfoot/swarm-cli)** `Go` — Build ideas out end-to-end by replacing the human with agentic swarms.
 - **[haskgrad](https://github.com/CharlieKerfoot/haskgrad)** `Haskell` — Tensor Autograd Engine built out in Haskell (inspired by Karpathy's micrograd)
 - **[rat-vision](https://github.com/CharlieKerfoot/rat-vision)** `Python` — A PyTorch CNN trained on sample images to detect rats in NYC apartments via a Raspberry Pi webcam and OpenCV.
-- **[top100-game](https://github.com/CharlieKerfoot/top100-game)** `TypeScript` — A fun browser game side project where players aim to guess the lowest answers on Top 100 lists
+- **[top100-game](https://github.com/CharlieKerfoot/top100-game)** `TypeScript` — A fun browser game side project where players aim to guess the lowest answers on Top 100 lists (350-450 players weekly)
 - **[maze-threejs](https://github.com/CharlieKerfoot/maze-threejs)** `TypeScript` — Visualizing maze algorithms (like Kruskal's) in the browser
 <!-- PROJECTS:END -->
 
