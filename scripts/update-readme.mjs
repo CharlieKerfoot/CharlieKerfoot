@@ -59,27 +59,58 @@ const renderProjects = (projects) => {
     .join("\n");
 };
 
-const fetchMergedPRs = () =>
+const fetchAllUserPRs = () =>
   paginate("/search/issues", {
-    q: `author:${USER} type:pr is:public is:merged -user:${USER}`,
-    per_page: "100",
-    sort: "updated",
-    order: "desc",
-  });
-
-// Repos where the user has authored a PR in any state. Used as a whitelist:
-// commits in repos outside this set are downstream forks pulling the user's
-// commits via co-author trailer, not real contributions.
-const fetchContributedRepoSlugs = async () => {
-  const items = await paginate("/search/issues", {
     q: `author:${USER} type:pr is:public -user:${USER}`,
     per_page: "100",
     sort: "updated",
     order: "desc",
   });
-  return new Set(
-    items.map((i) => i.repository_url.replace("https://api.github.com/repos/", "")),
-  );
+
+const slugFromUrl = (apiUrl) =>
+  apiUrl.replace("https://api.github.com/repos/", "");
+
+// For a closed-not-merged PR, follow its timeline for a cross-referenced
+// sibling PR in the same repo that was merged. Maintainers sometimes close
+// a contributor PR and re-open their own PR with the same fix.
+const findMergedSibling = async (pr) => {
+  const slug = slugFromUrl(pr.repository_url);
+  let timeline;
+  try {
+    timeline = await gh(`/repos/${slug}/issues/${pr.number}/timeline`, {
+      per_page: "100",
+    });
+  } catch (e) {
+    console.error(`timeline ${slug}#${pr.number}: ${e.message}`);
+    return null;
+  }
+
+  const candidates = [];
+  for (const ev of timeline) {
+    if (ev.event !== "cross-referenced") continue;
+    const src = ev.source?.issue;
+    if (!src?.pull_request) continue;
+    if (!src.repository_url?.endsWith(`/${slug}`)) continue;
+    if (src.user?.login === USER) continue;
+    candidates.push(src);
+  }
+
+  for (const c of candidates) {
+    try {
+      const full = await gh(`/repos/${slug}/pulls/${c.number}`);
+      if (full.merged_at) {
+        return {
+          number: full.number,
+          html_url: full.html_url,
+          closed_at: full.merged_at,
+          repository_url: pr.repository_url,
+        };
+      }
+    } catch (e) {
+      console.error(`pull ${slug}#${c.number}: ${e.message}`);
+    }
+  }
+  return null;
 };
 
 const fetchCommits = (query) =>
@@ -99,7 +130,7 @@ const buildContributionMap = (prs, commits) => {
   };
 
   for (const pr of prs) {
-    const slug = pr.repository_url.replace("https://api.github.com/repos/", "");
+    const slug = slugFromUrl(pr.repository_url);
     get(slug).prs.push({
       number: pr.number,
       url: pr.html_url,
@@ -176,12 +207,21 @@ const main = async () => {
   const projects = (await Promise.all(config.projects.map(fetchProject))).filter(Boolean);
   const excludeRepos = new Set(config.excludeRepos || []);
 
-  const [prs, authored, coauthored, contributedRepos] = await Promise.all([
-    fetchMergedPRs(),
+  const [allPRs, authored, coauthored] = await Promise.all([
+    fetchAllUserPRs(),
     fetchCommits(`author:${USER} -user:${USER}`),
-    fetchCommits(`"co-authored-by: ${EMAIL}" -user:${USER}`),
-    fetchContributedRepoSlugs(),
+    fetchCommits(`"<${EMAIL}>" -user:${USER}`),
   ]);
+
+  const mergedPRs = allPRs.filter((p) => p.pull_request?.merged_at);
+  const closedUnmerged = allPRs.filter(
+    (p) => p.state === "closed" && !p.pull_request?.merged_at,
+  );
+  const contributedRepos = new Set(allPRs.map((p) => slugFromUrl(p.repository_url)));
+
+  const siblings = (await Promise.all(closedUnmerged.map(findMergedSibling))).filter(
+    Boolean,
+  );
 
   const commitsBySha = new Map();
   for (const c of [...authored, ...coauthored]) commitsBySha.set(c.sha, c);
@@ -192,7 +232,15 @@ const main = async () => {
     contributedRepos.has(c.repository?.full_name),
   );
 
-  const map = buildContributionMap(prs, filteredCommits);
+  // Dedupe: a sibling PR might already be in mergedPRs if user is a co-author.
+  const seenPRKeys = new Set(
+    mergedPRs.map((p) => `${slugFromUrl(p.repository_url)}#${p.number}`),
+  );
+  const newSiblings = siblings.filter(
+    (s) => !seenPRKeys.has(`${slugFromUrl(s.repository_url)}#${s.number}`),
+  );
+
+  const map = buildContributionMap([...mergedPRs, ...newSiblings], filteredCommits);
   for (const slug of [...map.keys()]) {
     if (excludeRepos.has(slug)) map.delete(slug);
   }
@@ -203,7 +251,7 @@ const main = async () => {
   await writeFile("README.md", md);
 
   console.log(
-    `Updated: ${projects.length} projects, ${prs.length} merged PRs, ${commitsBySha.size} unique commits across ${map.size} repos`,
+    `Updated: ${projects.length} projects, ${mergedPRs.length} merged PRs, ${newSiblings.length} sibling-merged PRs, ${commitsBySha.size} unique commits across ${map.size} repos`,
   );
 };
 
