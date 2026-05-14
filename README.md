@@ -2,7 +2,7 @@
 
 I pretty regularly build stuff on here. 
 
-Currently focused on: Agentic tooling and CUA 
+Currently building: [Vouch](https://textvouch.com)
 
 For more, see [charliekerfoot.com](https://charliekerfoot.com) \
 (I try to write a blog there about once a week on random musings and what not. *in pursuit of eudaimonia*)
